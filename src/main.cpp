@@ -7,12 +7,23 @@
 #include <imgui-SFML.h>
 
 #include "imgui_setting.h"
+#include "Raycast.h"
+#include "MapEditor.h"
 
 int main(){
     const int WIDTH = sf::VideoMode::getDesktopMode().width;
     const int HEIGHT = sf::VideoMode::getDesktopMode().height;
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "RaycastRenderer");
     ImGui::SFML::Init(window);
+
+    int useRaycaster = 1;
+    ImVec2 fpsWidgetSize = { 0, 0 };
+    ImVec2 renderChoiceWidgetSize = { 0, 0 };
+
+    Raycaster raycaster(&window);
+    MapEditor mapEditor(&window);
+    
+
     
     std::chrono::high_resolution_clock::time_point start;
     std::chrono::high_resolution_clock::time_point end;
@@ -34,14 +45,31 @@ int main(){
         ImGui::SFML::Update(window, deltaClock.restart());
         window.clear(sf::Color::Black);
 
+        if (useRaycaster) {
+            raycaster.draw();
+        }
+        else {
+            mapEditor.draw();
+        }
+
         ImGui::ShowDemoWindow();
+
+
+        ImGui::Begin("Render Choice", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+        ImGui::SetWindowFontScale(1.5);
+        renderChoiceWidgetSize = ImGui::GetWindowSize();
+        ImGui::SetWindowPos(ImVec2{ WIDTH - renderChoiceWidgetSize.x, fpsWidgetSize.y });
+        ImGui::RadioButton("Raycaster", &useRaycaster, 1);
+        ImGui::RadioButton("Map Editor", &useRaycaster, 0);
+        ImGui::End();
 
 
         end = std::chrono::high_resolution_clock::now();
         fps = (float)1e9 / (float)std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
         ImGui::Begin("FPS", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
         ImGui::SetWindowFontScale(2.5);
-        ImGui::SetWindowPos(ImVec2{ WIDTH - ImGui::GetWindowWidth(), 0 });
+        fpsWidgetSize = ImGui::GetWindowSize();
+        ImGui::SetWindowPos(ImVec2{ WIDTH - fpsWidgetSize.x, 0 });
         ImGui::Text(std::to_string(fps).c_str());
         ImGui::End();
 
