@@ -1,6 +1,13 @@
 #pragma once
 #include <iostream>
+#include <vector>
+#include <chrono>
+
 #include <SFML/Graphics.hpp>
+
+#include "point.h"
+#include "wall.h"
+#include "sector.h"
 
 class MapEditor {
 public:
@@ -27,4 +34,15 @@ private:
 	std::pair<int, int> prevMousePos{0, 0};
 
 	bool dragging = false;
+
+	bool point1Placed = false;
+
+	//std::vector<Wall> walls;
+	std::vector<Sector> sectors = {Sector()};
+	Point p1{ 0, 0 };
+	Point p2{ 0, 0 };
+
+	std::chrono::high_resolution_clock::time_point last_point_click = std::chrono::high_resolution_clock::now();
+	int numMsSinceLastClickMin = 100;
+
 };

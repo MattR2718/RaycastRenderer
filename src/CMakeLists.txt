@@ -4,7 +4,7 @@ find_package(SFML COMPONENTS graphics system window CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(ImGui-SFML CONFIG)
 
-add_executable(${PROJECT_NAME} main.cpp "imgui_setting.h" "Raycast.cpp" "Raycast.h" "MapEditor.h" "MapEditor.cpp")
+add_executable(${PROJECT_NAME} main.cpp "imgui_setting.h" "Raycast.cpp" "Raycast.h" "MapEditor.h" "MapEditor.cpp" "wall.h" "wall.cpp" "point.h" "point.cpp" "sector.h" "sector.cpp")
 
 target_link_libraries(${PROJECT_NAME}
     imgui::imgui
