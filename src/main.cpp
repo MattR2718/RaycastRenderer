@@ -16,12 +16,12 @@ int main(){
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "RaycastRenderer");
     ImGui::SFML::Init(window);
 
-    int useRaycaster = 1;
+    int useRaycaster = 0;
     ImVec2 fpsWidgetSize = { 0, 0 };
     ImVec2 renderChoiceWidgetSize = { 0, 0 };
 
-    Raycaster raycaster(&window);
-    MapEditor mapEditor(&window);
+    Raycaster raycaster(&window, WIDTH, HEIGHT);
+    MapEditor mapEditor(&window, WIDTH, HEIGHT);
     
 
     
@@ -41,6 +41,14 @@ int main(){
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+
+            if (useRaycaster) {
+                //raycaster.draw();
+            }
+            else {
+                mapEditor.pollEvent(event);
+            }
+
         }
         ImGui::SFML::Update(window, deltaClock.restart());
         window.clear(sf::Color::Black);
@@ -51,7 +59,8 @@ int main(){
         else {
             mapEditor.draw();
         }
-
+        
+        
         ImGui::ShowDemoWindow();
 
 
