@@ -101,3 +101,33 @@ void MapEditor::pollEvent(sf::Event& event){
 	auto mp = sf::Mouse::getPosition(*this->window);
 	this->prevMousePos = {mp.x, mp.y};
 }
+
+void MapEditor::saveToJSON(){
+	//Variable to store path
+	nfdchar_t* outPath = NULL;
+	//Open up save dialog and store path chosen by user into outpath
+	nfdresult_t result = NFD_SaveDialog("json;", NULL, &outPath);
+	if (result == NFD_OKAY) {
+		int i = 0;
+		nlohmann::json main;
+		for (auto& s : this->sectors) {
+			nlohmann::json walls;
+			for (auto& w : s.walls) {
+				std::vector<std::pair<int, int>> wall{
+					{ w.p1.x, w.p1.y},
+					{ w.p2.x, w.p2.y }
+				};
+				walls.push_back(wall);
+			}
+			main.emplace(std::to_string(i++), walls);
+		}
+
+		std::string filePath = outPath;
+		filePath += ".json";
+		std::ofstream file(filePath);
+		file << main;
+	}
+	else {
+		// ERROR
+	}
+}

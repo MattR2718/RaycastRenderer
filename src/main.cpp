@@ -57,6 +57,12 @@ int main(){
             raycaster.draw();
         }
         else {
+            ImGui::Begin("Save Map To JSON");
+            if (ImGui::Button("SAVE TO JSON")) {
+                mapEditor.saveToJSON();
+            }
+            ImGui::End();
+
             mapEditor.draw();
         }
         

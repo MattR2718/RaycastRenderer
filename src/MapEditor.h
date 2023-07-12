@@ -1,9 +1,13 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include <chrono>
+#include <filesystem>
 
 #include <SFML/Graphics.hpp>
+#include <nfd.h>
+#include <nlohmann/json.hpp>
 
 #include "point.h"
 #include "wall.h"
@@ -15,6 +19,7 @@ public:
 	MapEditor(sf::RenderWindow* _window, const int _WIDTH, const int _HEIGHT);
 	void draw();
 	void pollEvent(sf::Event& event);
+	void saveToJSON();
 
 private:
 	sf::RenderWindow* window = nullptr;
