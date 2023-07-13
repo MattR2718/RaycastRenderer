@@ -75,3 +75,58 @@ void Player::generateRays(){
 		this->rays.push_back(Ray{ this->x, this->y, this->dir + i * rayStep });
 	}
 }
+
+
+//http://alienryderflex.com/polygon/
+//SECTORS MUST BE DRAWN IN CLOCKWISE OR ANTICLOCKWISE ORDER FOR SECTOR DETECTION TO WORK
+void Player::getCurrentSector(Map& map){
+	auto playerInSector = [](const auto& polyX, const auto& polyY, const int polyCorners, float x, float y) {
+		int   i, j = polyCorners - 1;
+		bool  oddNodes = false;
+		for (i = 0; i < polyCorners; i++) {
+			if ((polyY[i] < y && polyY[j] >= y
+				|| polyY[j] < y && polyY[i] >= y)
+				&& (polyX[i] <= x || polyX[j] <= x)) {
+				if (polyX[i] + (y - polyY[i]) / (polyY[j] - polyY[i]) * (polyX[j] - polyX[i]) < x) {
+					oddNodes = !oddNodes;
+				}
+			}
+			j = i;
+		}
+
+		return oddNodes;
+	};
+	
+	int i = 0;
+	for (auto& s : map.sectors) {
+		std::vector<int> xVals;
+		std::vector<int> yVals;
+		//std::vector<std::pair<int, int>> points;
+		for (auto& w : s.walls) {
+			//points.push_back(std::make_pair(w.p1.x, w.p1.y));
+			//points.push_back(std::make_pair(w.p2.x, w.p2.y));
+
+			xVals.push_back(w.p1.x);
+			xVals.push_back(w.p2.x);
+			yVals.push_back(w.p1.y);
+			yVals.push_back(w.p2.y);
+		}
+
+		/*for (auto& p : points) {
+			xVals.push_back(p.first);
+			yVals.push_back(p.second);
+		}*/
+
+		if(playerInSector(xVals, yVals, xVals.size(), this->x, this->y)){
+			this->currentSector = i;
+			std::cout << xVals.size() << '\n';
+			return;
+		}
+		i++;
+	}
+	this->currentSector = -1;
+
+	if (this->currentSector >= 0) {
+		this->sector = map.sectors[this->currentSector];
+	}
+}

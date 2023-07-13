@@ -62,12 +62,16 @@ int main(){
         window.clear(sf::Color::Black);
 
         player.generateRays();
+        player.getCurrentSector(map);
 
         ImGui::Begin("Player", NULL, ImGuiWindowFlags_AlwaysAutoResize);
         ImGui::SetWindowFontScale(2);
         std::string posStr("Pos: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")");
         ImGui::Text(posStr.c_str());
         ImGui::Text(std::string("Dir: " + std::to_string(player.dir)).c_str());
+
+        ImGui::Text(std::string("Current Sector: " + std::to_string(player.currentSector)).c_str());
+
         ImGui::SliderFloat("Move Velocity", &player.vel, 0, 100000);
         ImGui::SliderFloat("Turn Velocity", &player.turnVel, 0, 100);
         ImGui::SliderInt("Num Rays", &player.numRays, 0, 100);
@@ -87,6 +91,7 @@ int main(){
         else {
             ImGui::Begin("Sectors", NULL, ImGuiWindowFlags_AlwaysAutoResize);
             ImGui::SetWindowFontScale(2);
+            ImGui::Text("SECTORS MUST BE DRAWN IN CLOCKWISE OR ANTICLOCKWISE FOR SECTOR SETECTION TO WORK");
             ImGui::Text(std::to_string(mapEditor.currSector).c_str());
             if (ImGui::Button("Next Sector")) {
                 mapEditor.currSector++;
