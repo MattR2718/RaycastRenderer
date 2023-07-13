@@ -27,6 +27,9 @@ int main(){
     Map map;
     Player player(WIDTH / 2, HEIGHT / 2);
 
+    sf::Color ceilingColour(sf::Color(100, 100, 100));
+    sf::Color floorColour(sf::Color(0, 0, 200));
+
     bool showRayIntersections = false;
 
     
@@ -91,6 +94,14 @@ int main(){
             ImGui::SetWindowFontScale(2);
             ImGui::Text(std::to_string(map.sectors.size()).c_str());
             ImGui::End();
+
+            sf::RectangleShape fc(sf::Vector2f(WIDTH, HEIGHT / 2));
+            fc.setFillColor(ceilingColour);
+            fc.setPosition(sf::Vector2f(0, 0));
+            window.draw(fc);
+            fc.setPosition(sf::Vector2f(0, HEIGHT / 2));
+            fc.setFillColor(floorColour);
+            window.draw(fc);
 
             raycaster.raycast(player, map, &window, showRayIntersections);
             raycaster.draw(player);

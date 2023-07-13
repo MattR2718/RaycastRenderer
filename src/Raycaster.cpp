@@ -31,7 +31,7 @@ void Raycaster::draw(Player& player){
 
 	//DRAW DISTS
 	//float height = 1000;
-	for (int i = 0; i < player.numRays; i++) {
+	for (int i = 0; i < this->dists.size(); i++) {
 		this->dists[i] *= std::abs(std::cos(0.5*player.rays[i].dir));
 		float height = mapValue(this->dists[i], 0, 2000.0, HEIGHT, 200);
 		//float height = mapValue(this->dists[i], 0, 2000.0, (2/3) * HEIGHT, 50);
@@ -42,7 +42,7 @@ void Raycaster::draw(Player& player){
 		int mapColour = 255 - int(mapValue(height, HEIGHT, 200, 20, 200));
 		//std::cout << this->dists[i]<<' '<< mapColour << '\n';
 
-		rect.setFillColor(sf::Color(0, 0, mapColour, (this->dists[i] == MAX_RAY_DIST) ? 0 : 255));
+		rect.setFillColor(sf::Color(0, mapColour, 100, (this->dists[i] == MAX_RAY_DIST) ? 0 : 255));
 		window->draw(rect);
 	}
 
@@ -57,8 +57,8 @@ void Raycaster::raycast(Player& player, Map& map, sf::RenderWindow* window, bool
 			rdist.push_back(w.calculateIntersect(r, window, showIntersections));
 		}
 
-		//for (auto& d : rdist) { std::cout << d << ' '; } std::cout << '\n';
-
-		this->dists.push_back(*std::min_element(rdist.begin(), rdist.end()));
+		if (rdist.size() > 0) {
+			this->dists.push_back(*std::min_element(rdist.begin(), rdist.end()));
+		}
 	}
 }
