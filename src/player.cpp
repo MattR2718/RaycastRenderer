@@ -5,37 +5,61 @@ Player::Player(float _x, float _y){
 	this->y = _y;
 }
 
-void Player::move(sf::Event& event, double deltaT){
-	std::cout << deltaT << '\n';
+void Player::move(sf::Event& event, double deltaT, Map& map){
+	//std::cout << deltaT << '\n';
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::W) {
-			std::cout << "W PRESSED\n";
+			//std::cout << "W PRESSED\n";
 			this->x += this->vel * std::sin(this->dir) * (deltaT / 1e9);
 			this->y += this->vel * std::cos(this->dir) * (deltaT / 1e9);
+			this->getCurrentSector(map);
+			if (this->currentSector == -1) {
+				this->x -= this->vel * std::sin(this->dir) * (deltaT / 1e9);
+				this->y -= this->vel * std::cos(this->dir) * (deltaT / 1e9);
+			}
 
 		}
 		if (event.key.code == sf::Keyboard::A) {
-			std::cout << "A PRESSED\n";
+			//std::cout << "A PRESSED\n";
 			this->x += this->vel * std::sin(this->dir + PI / 2) * (deltaT / 1e9);
 			this->y += this->vel * std::cos(this->dir + PI / 2) * (deltaT / 1e9);
+			this->getCurrentSector(map);
+			if (this->currentSector == -1) {
+				this->x -= this->vel * std::sin(this->dir + PI / 2) * (deltaT / 1e9);
+				this->y -= this->vel * std::cos(this->dir + PI / 2) * (deltaT / 1e9);
+			}
 		}
 		if (event.key.code == sf::Keyboard::S) {
-			std::cout << "S PRESSED\n";
+			//std::cout << "S PRESSED\n";
 			this->x -= this->vel * std::sin(this->dir) * (deltaT / 1e9);
 			this->y -= this->vel * std::cos(this->dir) * (deltaT / 1e9);
+			this->getCurrentSector(map);
+			if (this->currentSector == -1) {
+				this->x += this->vel * std::sin(this->dir) * (deltaT / 1e9);
+				this->y += this->vel * std::cos(this->dir) * (deltaT / 1e9);
+			}
 		}
 		if (event.key.code == sf::Keyboard::D) {
-			std::cout << "D PRESSED\n";
+			//std::cout << "D PRESSED\n";
 			this->x += this->vel * std::sin(this->dir - PI / 2) * (deltaT / 1e9);
 			this->y += this->vel * std::cos(this->dir - PI / 2) * (deltaT / 1e9);
+			this->getCurrentSector(map);
+			if (this->currentSector == -1) {
+				this->x -= this->vel * std::sin(this->dir - PI / 2) * (deltaT / 1e9);
+				this->y -= this->vel * std::cos(this->dir - PI / 2) * (deltaT / 1e9);
+			}
 		}
 		if (event.key.code == sf::Keyboard::Left) {
-			std::cout << "LEFT PRESSED\n";
+			//std::cout << "LEFT PRESSED\n";
 			dir += this->turnVel * (deltaT / 1e9);
+			//dir = std::fmod(dir, 2 * PI);
+			if (dir > PI) { dir = -PI; }
 		}
 		if (event.key.code == sf::Keyboard::Right) {
-			std::cout << "RIGHT PRESSED\n";
+			//std::cout << "RIGHT PRESSED\n";
 			dir -= this->turnVel * (deltaT / 1e9);
+			//dir = std::fmod(dir, 2 * PI);
+			if (dir < -PI) { dir = PI; }
 		}
 		this->generateRays();
 	}
@@ -49,11 +73,14 @@ void Player::drawOnMapEditor(sf::RenderWindow* window, std::pair<int, int>& topL
 	window->draw(line, 2, sf::Lines);
 
 	for (auto& r : rays) {
-		sf::Vertex line[] = {
-		sf::Vertex(sf::Vector2f(r.ox + topLeft.first, r.oy + topLeft.second), sf::Color::Red),
-		sf::Vertex(sf::Vector2f(r.ox + topLeft.first + r.rayMag * std::sin(r.dir), r.oy + topLeft.second + r.rayMag * std::cos(r.dir)), sf::Color::Red)
-		};
-		window->draw(line, 2, sf::Lines);
+		if (r.insct != std::make_pair(0.0, 0.0)) {
+			sf::Vertex line[] = {
+			sf::Vertex(sf::Vector2f(r.ox + topLeft.first, r.oy + topLeft.second), sf::Color::Red),
+			//sf::Vertex(sf::Vector2f(r.ox + topLeft.first + r.rayMag * std::sin(r.dir), r.oy + topLeft.second + r.rayMag * std::cos(r.dir)), sf::Color::Red)
+			sf::Vertex(sf::Vector2f(r.insct.first + topLeft.first, r.insct.second + topLeft.second), sf::Color::Red)
+			};
+			window->draw(line, 2, sf::Lines);
+		}
 	}
 	
 	sf::CircleShape c(this->rad);
@@ -73,7 +100,11 @@ void Player::generateRays(){
 	}*/
 
 	for (int i = -std::floor(this->numRays / 2); i <= std::ceil(this->numRays / 2); i++) {
-		this->rays.push_back(Ray{ this->x, this->y, this->dir + i * rayStep });
+		float rdir = this->dir + i * rayStep;
+		if (rdir > PI) { rdir -= 2 * PI; }
+		if (rdir < -PI) { rdir += 2 * PI; }
+
+		this->rays.push_back(Ray{ this->x, this->y, rdir });
 	}
 }
 

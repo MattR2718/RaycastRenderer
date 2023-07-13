@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
 
-#define MAX_RAY_DIST 100000.0
+#define MAX_RAY_DIST 10000.0
 
 #include "point.h"
 #include "ray.h"
@@ -24,7 +24,7 @@ public:
 
 	nlohmann::json toJSON();
 
-	float calculateIntersect(const Ray& ray, sf::RenderWindow* window);
+	float calculateIntersect(Ray& ray, sf::RenderWindow* window, bool showIntersections);
 
 
 

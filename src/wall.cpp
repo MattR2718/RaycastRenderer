@@ -62,7 +62,7 @@ nlohmann::json Wall::toJSON(){
 //	return MAX_RAY_DIST;
 //}
 
-float Wall::calculateIntersect(const Ray& ray, sf::RenderWindow* window) {
+float Wall::calculateIntersect(Ray& ray, sf::RenderWindow* window, bool showIntersections) {
 
 	auto crossP = [](const Point& p1, const Point& p2, const Point& p3) {
 		return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
@@ -108,11 +108,13 @@ float Wall::calculateIntersect(const Ray& ray, sf::RenderWindow* window) {
 
 	if (doIntersect(p1, p2, p3, p4)) {
 		auto in = calcIntersect(p1, p2, p3, p4);
-		
-		sf::CircleShape c(20.0);
-		c.setPosition(sf::Vector2f(in.first - 20.0 + this->topLeftOffset.first, in.second - 20.0 + this->topLeftOffset.second));
-		c.setFillColor(sf::Color::Red);
-		window->draw(c);
+		ray.insct = in;
+		if (showIntersections) {
+			sf::CircleShape c(20.0);
+			c.setPosition(sf::Vector2f(in.first - 20.0 + this->topLeftOffset.first, in.second - 20.0 + this->topLeftOffset.second));
+			c.setFillColor(sf::Color::Red);
+			window->draw(c);
+		}
 
 		return std::sqrt((p1.x - in.first) * (p1.x - in.first) + (p1.y - in.second) * (p1.y - in.second));
 	}

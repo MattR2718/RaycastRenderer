@@ -19,8 +19,8 @@ public:
 
 	float vel = 500.0;
 	float turnVel = PI;
-	float fov = PI;
-	int numRays = 5;
+	float fov = 1.5;
+	int numRays = 100;
 
 	int currentSector = -1;
 
@@ -28,7 +28,7 @@ public:
 	Sector sector;
 
 	Player(float _x = 0, float _y = 0);
-	void move(sf::Event& event, double deltaT);
+	void move(sf::Event& event, double deltaT, Map& map);
 	void drawOnMapEditor(sf::RenderWindow* window, std::pair<int, int>& topLeft, const int WIDTH, const int HEIGHT);
 	void generateRays();
 	void getCurrentSector(Map& map);

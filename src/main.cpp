@@ -49,7 +49,7 @@ int main(){
             }
 
             if (event.type == sf::Event::KeyPressed) {
-                player.move(event, deltaT);
+                player.move(event, deltaT, map);
             }
 
             if (useRaycaster) {
@@ -76,8 +76,13 @@ int main(){
 
         ImGui::SliderFloat("Move Velocity", &player.vel, 0, 100000);
         ImGui::SliderFloat("Turn Velocity", &player.turnVel, 0, 100);
-        ImGui::SliderInt("Num Rays", &player.numRays, 0, 100);
+        ImGui::SliderInt("Num Rays", &player.numRays, 0, 1000);
         ImGui::SliderFloat("FOV", &player.fov, 0, 2 * PI);
+        ImGui::End();
+
+        ImGui::Begin("Raycast", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::SetWindowFontScale(2);
+        ImGui::Checkbox("Show Intersections", &showRayIntersections);
         ImGui::End();
 
 
@@ -87,7 +92,7 @@ int main(){
             ImGui::Text(std::to_string(map.sectors.size()).c_str());
             ImGui::End();
 
-            raycaster.raycast(player, map, &window);
+            raycaster.raycast(player, map, &window, showRayIntersections);
             raycaster.draw(player);
         }
         else {
@@ -119,19 +124,15 @@ int main(){
 
             mapEditor.draw(map);
             
-
-            ImGui::Begin("Raycast");
-            ImGui::Checkbox("I", &showRayIntersections);
-            ImGui::End();
             if (showRayIntersections) {
-                raycaster.raycast(player, map, &window);
+                raycaster.raycast(player, map, &window, showRayIntersections);
             }
             
             player.drawOnMapEditor(&window, mapEditor.topLeft, WIDTH, HEIGHT);
         }
         
         
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
 
         ImGui::Begin("Render Choice", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
