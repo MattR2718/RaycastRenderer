@@ -37,6 +37,7 @@ void Player::move(sf::Event& event, double deltaT){
 			std::cout << "RIGHT PRESSED\n";
 			dir -= this->turnVel * (deltaT / 1e9);
 		}
+		this->generateRays();
 	}
 }
 
@@ -119,14 +120,19 @@ void Player::getCurrentSector(Map& map){
 
 		if(playerInSector(xVals, yVals, xVals.size(), this->x, this->y)){
 			this->currentSector = i;
-			std::cout << xVals.size() << '\n';
+			//std::cout << xVals.size() << '\n';
+			this->sector = map.sectors[this->currentSector];
 			return;
 		}
 		i++;
 	}
 	this->currentSector = -1;
+	this->sector = Sector();
 
-	if (this->currentSector >= 0) {
+	/*if (this->currentSector >= 0) {
 		this->sector = map.sectors[this->currentSector];
 	}
+	else {
+		this->sector = Sector();
+	}*/
 }

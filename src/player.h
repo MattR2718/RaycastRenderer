@@ -17,14 +17,15 @@ public:
 
 	float dir = PI;
 
-	float vel = 33000.0;
-	float turnVel = 50;
+	float vel = 500.0;
+	float turnVel = PI;
 	float fov = PI;
 	int numRays = 5;
 
 	int currentSector = -1;
 
 	std::vector<Ray> rays;
+	Sector sector;
 
 	Player(float _x = 0, float _y = 0);
 	void move(sf::Event& event, double deltaT);
@@ -32,11 +33,10 @@ public:
 	void generateRays();
 	void getCurrentSector(Map& map);
 
+
 private:
 	int rad = 40.0;
 
 	float dirLineMag = 100;
-
-	Sector sector;
 
 };

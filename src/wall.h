@@ -5,7 +5,12 @@
 #include <SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
 
+#define MAX_RAY_DIST 100000.0
+
 #include "point.h"
+#include "ray.h"
+
+#define PI 3.141592653589793238
 
 class Wall {
 public:
@@ -18,6 +23,8 @@ public:
 	void draw(sf::RenderWindow* window);
 
 	nlohmann::json toJSON();
+
+	float calculateIntersect(const Ray& ray, sf::RenderWindow* window);
 
 
 

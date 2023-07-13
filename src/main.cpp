@@ -27,6 +27,8 @@ int main(){
     Map map;
     Player player(WIDTH / 2, HEIGHT / 2);
 
+    bool showRayIntersections = false;
+
     
     std::chrono::high_resolution_clock::time_point start;
     std::chrono::high_resolution_clock::time_point end;
@@ -85,8 +87,8 @@ int main(){
             ImGui::Text(std::to_string(map.sectors.size()).c_str());
             ImGui::End();
 
-
-            raycaster.draw();
+            raycaster.raycast(player, map, &window);
+            raycaster.draw(player);
         }
         else {
             ImGui::Begin("Sectors", NULL, ImGuiWindowFlags_AlwaysAutoResize);
@@ -116,6 +118,15 @@ int main(){
             ImGui::End();
 
             mapEditor.draw(map);
+            
+
+            ImGui::Begin("Raycast");
+            ImGui::Checkbox("I", &showRayIntersections);
+            ImGui::End();
+            if (showRayIntersections) {
+                raycaster.raycast(player, map, &window);
+            }
+            
             player.drawOnMapEditor(&window, mapEditor.topLeft, WIDTH, HEIGHT);
         }
         
