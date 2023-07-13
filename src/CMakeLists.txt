@@ -6,7 +6,7 @@ find_package(ImGui-SFML CONFIG)
 find_package(unofficial-nativefiledialog CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp "imgui_setting.h" "Raycaster.cpp" "Raycaster.h" "MapEditor.h" "MapEditor.cpp" "wall.h" "wall.cpp" "point.h" "point.cpp" "sector.h" "sector.cpp" "map.h" "map.cpp" "player.h" "player.cpp")
+add_executable(${PROJECT_NAME} main.cpp "imgui_setting.h" "Raycaster.cpp" "Raycaster.h" "MapEditor.h" "MapEditor.cpp" "wall.h" "wall.cpp" "point.h" "point.cpp" "sector.h" "sector.cpp" "map.h" "map.cpp" "player.h" "player.cpp" "ray.h")
 
 target_link_libraries(${PROJECT_NAME}
     imgui::imgui

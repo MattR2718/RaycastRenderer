@@ -61,6 +61,8 @@ int main(){
         ImGui::SFML::Update(window, deltaClock.restart());
         window.clear(sf::Color::Black);
 
+        player.generateRays();
+
         ImGui::Begin("Player", NULL, ImGuiWindowFlags_AlwaysAutoResize);
         ImGui::SetWindowFontScale(2);
         std::string posStr("Pos: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")");
@@ -68,6 +70,8 @@ int main(){
         ImGui::Text(std::string("Dir: " + std::to_string(player.dir)).c_str());
         ImGui::SliderFloat("Move Velocity", &player.vel, 0, 100000);
         ImGui::SliderFloat("Turn Velocity", &player.turnVel, 0, 100);
+        ImGui::SliderInt("Num Rays", &player.numRays, 0, 100);
+        ImGui::SliderFloat("FOV", &player.fov, 0, 2 * PI);
         ImGui::End();
 
 
