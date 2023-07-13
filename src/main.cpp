@@ -57,9 +57,26 @@ int main(){
             raycaster.draw();
         }
         else {
-            ImGui::Begin("Save Map To JSON");
+            ImGui::Begin("Sectors");
+            ImGui::Text(std::to_string(mapEditor.currSector).c_str());
+            if (ImGui::Button("Next Sector")) {
+                mapEditor.currSector++;
+                if (mapEditor.currSector == mapEditor.map.sectors.size()) {
+                    mapEditor.map.sectors.push_back(Sector());
+                }
+            }
+            if (ImGui::Button("Previous Sector")) {
+                mapEditor.currSector = (mapEditor.currSector > 0) ? mapEditor.currSector - 1 : mapEditor.map.sectors.size() - 1;
+            }
+            ImGui::End();
+
+
+            ImGui::Begin("Save/Load Map");
             if (ImGui::Button("SAVE TO JSON")) {
                 mapEditor.saveToJSON();
+            }
+            if (ImGui::Button("LOAD FROM JSON")) {
+                mapEditor.loadFromJSON();
             }
             ImGui::End();
 

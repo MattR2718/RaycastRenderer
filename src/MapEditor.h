@@ -6,20 +6,26 @@
 #include <filesystem>
 
 #include <SFML/Graphics.hpp>
+#include <imgui.h>
+#include <imgui-SFML.h>
 #include <nfd.h>
 #include <nlohmann/json.hpp>
 
 #include "point.h"
 #include "wall.h"
 #include "sector.h"
+#include "map.h"
 
 class MapEditor {
 public:
+	int currSector = 0;
+	Map map;
 
 	MapEditor(sf::RenderWindow* _window, const int _WIDTH, const int _HEIGHT);
 	void draw();
 	void pollEvent(sf::Event& event);
 	void saveToJSON();
+	void loadFromJSON();
 
 private:
 	sf::RenderWindow* window = nullptr;
@@ -43,7 +49,7 @@ private:
 	bool point1Placed = false;
 
 	//std::vector<Wall> walls;
-	std::vector<Sector> sectors = {Sector()};
+	//std::vector<Sector> sectors = {Sector()};
 	Point p1{ 0, 0 };
 	Point p2{ 0, 0 };
 

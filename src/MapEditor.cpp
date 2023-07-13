@@ -27,7 +27,7 @@ void MapEditor::draw(){
 		w.draw(window);
 	}*/
 
-	for (auto& s : this->sectors) {
+	for (auto& s : this->map.sectors) {
 		s.topLeftOffset = this->topLeft;
 		s.draw(window);
 	}
@@ -49,11 +49,11 @@ void MapEditor::pollEvent(sf::Event& event){
 	}
 
 	//Place Point
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && numMsSinceLastClickMin < std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - this->last_point_click).count()) {
+	if (!ImGui::GetIO().WantCaptureMouse && sf::Mouse::isButtonPressed(sf::Mouse::Left) && numMsSinceLastClickMin < std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - this->last_point_click).count()) {
 		auto mp = sf::Mouse::getPosition(*this->window);
 
 		bool wallPointChosen = false;
-		for (auto& sect : this->sectors) {
+		for (auto& sect : this->map.sectors) {
 			for (auto& w : sect.walls) {
 				if ((std::abs(w.p1.x - mp.x - this->topLeft.first) * std::abs(w.p1.x - mp.x - this->topLeft.first) + std::abs(w.p1.y - mp.y - this->topLeft.second) * std::abs(w.p1.y - mp.y - this->topLeft.second)) <= (w.p1.rad * w.p1.rad)) {
 					wallPointChosen = true;
@@ -81,13 +81,15 @@ void MapEditor::pollEvent(sf::Event& event){
 						}
 					}
 				}
+				if (wallPointChosen) { break; }
 			}
+			if (wallPointChosen) { break; }
 		}
 
 		if (!wallPointChosen) {
 			if (this->point1Placed) {
 				this->p2 = Point(mp.x - this->topLeft.first, mp.y - this->topLeft.second);
-				this->sectors[0].appendWall(Wall{this->p1, this->p2});
+				this->map.sectors[this->currSector].appendWall(Wall{this->p1, this->p2});
 				this->point1Placed = false;
 			}
 			else {
@@ -110,16 +112,23 @@ void MapEditor::saveToJSON(){
 	if (result == NFD_OKAY) {
 		int i = 0;
 		nlohmann::json main;
-		for (auto& s : this->sectors) {
-			nlohmann::json walls;
-			for (auto& w : s.walls) {
-				std::vector<std::pair<int, int>> wall{
-					{ w.p1.x, w.p1.y},
-					{ w.p2.x, w.p2.y }
-				};
-				walls.push_back(wall);
-			}
-			main.emplace(std::to_string(i++), walls);
+		//for (auto& s : this->map.sectors) {
+		//	nlohmann::json walls;
+		//	for (auto& w : s.walls) {
+		//		std::pair<std::pair<int, int>, std::pair<int, int>> wall{
+		//			{ w.p1.x, w.p1.y},
+		//			{ w.p2.x, w.p2.y }
+		//		};
+		//		walls.push_back(wall);
+		//	}
+		//	nlohmann::json sector;
+		//	sector["Sect ID"] = i++;
+		//	sector["Walls"] = walls;
+		//	main.emplace(sector);
+		//	//main.emplace(std::to_string(i++), walls);
+		//}
+		for (auto& s : this->map.sectors) {
+			main[std::to_string(i++)] = s.toJSON();
 		}
 
 		std::string filePath = outPath;
@@ -130,4 +139,31 @@ void MapEditor::saveToJSON(){
 	else {
 		// ERROR
 	}
+}
+
+void MapEditor::loadFromJSON(){
+	nfdchar_t* outPath = NULL;
+	nfdresult_t result = NFD_OpenDialog("json;", NULL, &outPath);
+	if (result == NFD_OKAY) {
+		std::string filePath = outPath;
+		std::ifstream file(filePath);
+		nlohmann::json data = nlohmann::json::parse(file);
+		std::cout << data.dump(4) << '\n';
+		
+		this->map.sectors.clear();
+
+		int i = 0;
+		do {
+			try {
+				nlohmann::json j = data.at(std::to_string(i++));
+				this->map.sectors.push_back(Sector(j));
+			}
+			catch (const std::exception & e){
+				//std::cout << e.what();
+				break;
+			}
+
+		} while (i < 100); //Arbritrary max number of sectors to prevent infinite loop in case of error
+	}
+
 }

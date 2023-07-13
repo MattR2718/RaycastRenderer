@@ -7,7 +7,7 @@ public:
 	int x = -1;
 	int y = -1;
 	std::pair<int, int> topLeftOffset{0, 0};
-	int rad = 10;
+	int rad = 20;
 
 	sf::Color col{255, 255, 0};
 

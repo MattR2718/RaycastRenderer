@@ -1,7 +1,9 @@
 #pragma once
+#include <iostream>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 
 #include "point.h"
 
@@ -12,7 +14,12 @@ public:
 	std::pair<int, int> topLeftOffset{0, 0};
 
 	Wall(Point _p1, Point _p2);
+	Wall(nlohmann::json& j);
 	void draw(sf::RenderWindow* window);
+
+	nlohmann::json toJSON();
+
+
 
 private:
 
