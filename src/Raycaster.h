@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "map.h"
+
 class Raycaster {
 public:
 

@@ -1,4 +1,4 @@
-#include "Raycast.h"
+#include "Raycaster.h"
 
 Raycaster::Raycaster(sf::RenderWindow* _window, const int _WIDTH, const int _HEIGHT){
 	this->window = _window;

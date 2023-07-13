@@ -19,13 +19,13 @@
 class MapEditor {
 public:
 	int currSector = 0;
-	Map map;
+	std::pair<int, int> topLeft{ 0, 0 };
 
 	MapEditor(sf::RenderWindow* _window, const int _WIDTH, const int _HEIGHT);
-	void draw();
-	void pollEvent(sf::Event& event);
-	void saveToJSON();
-	void loadFromJSON();
+	void draw(Map& map);
+	void pollEvent(sf::Event& event, Map& map);
+	void saveToJSON(Map& map);
+	void loadFromJSON(Map& map);
 
 private:
 	sf::RenderWindow* window = nullptr;
@@ -41,7 +41,6 @@ private:
 	sf::RectangleShape vertGridLine;
 	sf::RectangleShape horiGridLine;
 
-	std::pair<int, int> topLeft{ 0, 0 };
 	std::pair<int, int> prevMousePos{0, 0};
 
 	bool dragging = false;

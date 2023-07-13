@@ -10,7 +10,7 @@ MapEditor::MapEditor(sf::RenderWindow* _window, const int _WIDTH, const int _HEI
 	this->horiGridLine.setFillColor(this->lineColour);
 }
 
-void MapEditor::draw(){
+void MapEditor::draw(Map& map){
 	this->window->clear(this->backgroundColour);
 
 	for (int i = this->topLeft.first % this->cellSize; i < this->WIDTH; i += this->cellSize) {
@@ -27,13 +27,13 @@ void MapEditor::draw(){
 		w.draw(window);
 	}*/
 
-	for (auto& s : this->map.sectors) {
+	for (auto& s : map.sectors) {
 		s.topLeftOffset = this->topLeft;
 		s.draw(window);
 	}
 }
 
-void MapEditor::pollEvent(sf::Event& event){
+void MapEditor::pollEvent(sf::Event& event, Map& map){
 	//Dragging Background
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
 		dragging = true;
@@ -53,7 +53,7 @@ void MapEditor::pollEvent(sf::Event& event){
 		auto mp = sf::Mouse::getPosition(*this->window);
 
 		bool wallPointChosen = false;
-		for (auto& sect : this->map.sectors) {
+		for (auto& sect : map.sectors) {
 			for (auto& w : sect.walls) {
 				if ((std::abs(w.p1.x - mp.x - this->topLeft.first) * std::abs(w.p1.x - mp.x - this->topLeft.first) + std::abs(w.p1.y - mp.y - this->topLeft.second) * std::abs(w.p1.y - mp.y - this->topLeft.second)) <= (w.p1.rad * w.p1.rad)) {
 					wallPointChosen = true;
@@ -89,7 +89,7 @@ void MapEditor::pollEvent(sf::Event& event){
 		if (!wallPointChosen) {
 			if (this->point1Placed) {
 				this->p2 = Point(mp.x - this->topLeft.first, mp.y - this->topLeft.second);
-				this->map.sectors[this->currSector].appendWall(Wall{this->p1, this->p2});
+				map.sectors[this->currSector].appendWall(Wall{this->p1, this->p2});
 				this->point1Placed = false;
 			}
 			else {
@@ -104,7 +104,7 @@ void MapEditor::pollEvent(sf::Event& event){
 	this->prevMousePos = {mp.x, mp.y};
 }
 
-void MapEditor::saveToJSON(){
+void MapEditor::saveToJSON(Map& map){
 	//Variable to store path
 	nfdchar_t* outPath = NULL;
 	//Open up save dialog and store path chosen by user into outpath
@@ -127,7 +127,7 @@ void MapEditor::saveToJSON(){
 		//	main.emplace(sector);
 		//	//main.emplace(std::to_string(i++), walls);
 		//}
-		for (auto& s : this->map.sectors) {
+		for (auto& s : map.sectors) {
 			main[std::to_string(i++)] = s.toJSON();
 		}
 
@@ -141,7 +141,7 @@ void MapEditor::saveToJSON(){
 	}
 }
 
-void MapEditor::loadFromJSON(){
+void MapEditor::loadFromJSON(Map& map){
 	nfdchar_t* outPath = NULL;
 	nfdresult_t result = NFD_OpenDialog("json;", NULL, &outPath);
 	if (result == NFD_OKAY) {
@@ -150,13 +150,13 @@ void MapEditor::loadFromJSON(){
 		nlohmann::json data = nlohmann::json::parse(file);
 		std::cout << data.dump(4) << '\n';
 		
-		this->map.sectors.clear();
+		map.sectors.clear();
 
 		int i = 0;
 		do {
 			try {
 				nlohmann::json j = data.at(std::to_string(i++));
-				this->map.sectors.push_back(Sector(j));
+				map.sectors.push_back(Sector(j));
 			}
 			catch (const std::exception & e){
 				//std::cout << e.what();
